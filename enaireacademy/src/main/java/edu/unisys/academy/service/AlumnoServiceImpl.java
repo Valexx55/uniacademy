@@ -50,28 +50,48 @@ public class AlumnoServiceImpl implements AlumnoService {
 	@Override
 	@Transactional (readOnly = true)
 	public Optional<Alumno> findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return this.alumnoRepositorySpringData.findById(id);
 	}
 
 	@Override
 	@Transactional
 	public Alumno save(Alumno alumno) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return this.alumnoRepositorySpringData.save(alumno);
 	}
 
 	@Override
 	@Transactional
 	public Alumno update(Alumno alumno, Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Alumno alumno_actualizado = null;
+		Alumno alumno_leido = null;
+		Optional<Alumno> oa = null;
+		
+			//1 LEER EL ALUMO
+			oa = this.alumnoRepositorySpringData.findById(id);
+			if (oa.isPresent())
+			{
+				alumno_leido = oa.get();
+				//2 MODIFICAR LOS ATRIBUTOS QUE DESEE
+				alumno_leido.setApellido(alumno.getApellido());
+				alumno_leido.setNombre(alumno.getNombre());
+				alumno_leido.setEmail(alumno.getEmail());
+				alumno_leido.setEdad(alumno.getEdad());
+				
+				//3 SAVE SOBRE EL ALUMNO MODIFICADO
+				alumno_actualizado = this.alumnoRepositorySpringData.save(alumno_leido);
+				
+			}
+			
+		
+		return alumno_actualizado;
 	}
 
 	@Override
 	@Transactional
 	public void deleteById(Long id) {
-		// TODO Auto-generated method stub
+		this.alumnoRepositorySpringData.deleteById(id);
 		
 	}
 

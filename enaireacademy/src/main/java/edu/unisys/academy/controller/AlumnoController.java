@@ -1,6 +1,11 @@
 package edu.unisys.academy.controller;
 
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,10 +41,15 @@ public class AlumnoController {
 	@Autowired
 	private AlumnoService alumnoService;
 	
+	Logger log = LoggerFactory.getLogger(AlumnoController.class);
+	
 	@GetMapping("/prueba")
 	public Alumno pruebaAlumno ()
 	{
 		Alumno alumno = null;
+		
+			log.debug("ENTRANDO EN /prueba debug");
+			log.info("ENTRANDO EN /prueba info");
 		
 			alumno = new Alumno();//en este momento, el alumno está en estado TRANSIENT 
 			alumno.setId(15L);//lo que significa que para Hibernate no existe
@@ -68,26 +78,70 @@ public class AlumnoController {
 	@GetMapping("/{id}") //GET http://localhost:8081/alumno/3
 	public ResponseEntity<?> leerAlumnoPorId (@PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
 	{
-		return null;
+		ResponseEntity<?> responseEntity = null;
+		Optional<Alumno> opcional_alumno = null;
+		Alumno alumno_leido = null;
+		
+			opcional_alumno = this.alumnoService.findById(id);
+			if (opcional_alumno.isPresent())
+			{
+				//ese id existía y por tanto, tenemos un alumno que devolver
+				alumno_leido = opcional_alumno.get();
+				responseEntity = ResponseEntity.ok(alumno_leido);
+				
+			} else  
+			{
+				//TODO hacer el log
+				//ese id existía y por tanto, tenemos un alumno que devolver
+				responseEntity = ResponseEntity.noContent().build();
+			}
+		
+		
+		return responseEntity;
 	}
 	
 	
 	@PostMapping //POST http://localhost:8081/alumno/
 	public ResponseEntity<?> insertarAlumno (@RequestBody Alumno alumno) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
 	{
-		return null;
+		ResponseEntity<?> responseEntity = null;
+		Alumno alumno_creado = null;
+		
+			alumno_creado = this.alumnoService.save(alumno);
+			responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(alumno_creado);
+		
+		return responseEntity;
 	}
 	
 	@PutMapping("/{id}") //PUT http://localhost:8081/alumno/id
 	public ResponseEntity<?> modificarAlumno (@RequestBody Alumno alumno, @PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
 	{
-		return null;
+		ResponseEntity<?> responseEntity = null;
+		Alumno alumno_actualizado = null;
+		
+			alumno_actualizado = this.alumnoService.update(alumno, id);
+			if (alumno_actualizado != null)
+			{
+				//se ha MODIFICADO correctamente
+				responseEntity = ResponseEntity.ok(alumno_actualizado);
+			} else {
+				responseEntity = ResponseEntity.notFound().build();
+			}
+		
+			 
+			 
+		return responseEntity;
 	}
 	
 	@DeleteMapping("/{id}") //DELETE http://localhost:8081/alumno/id
 	public ResponseEntity<?> borrarAlumno (@PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
 	{
-		return null;
+		ResponseEntity<?> responseEntity = null;
+		
+			this.alumnoService.deleteById(id);
+			responseEntity = ResponseEntity.ok().build();
+		
+		return responseEntity;
 	}
 
 }
