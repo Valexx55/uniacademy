@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
@@ -43,19 +45,34 @@ remove (entity) //elimino
 
 	@Override
 	public List<Alumno> leerTodosLosAlumnos() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<Alumno> lista_alumnos = null;
+		//no existe el findAll en el entityManager
+		//tenemos que hacer una consulta "a pelo"
+		
+		//Query q = entityManager.createQuery("select a from Alumno a");
+		//lista_alumnos = (List<Alumno>)q.getResultList();
+		
+		TypedQuery<Alumno> tq = entityManager.createQuery("select a from Alumno a", Alumno.class);
+		lista_alumnos = tq.getResultList();
+		
+		return lista_alumnos;
 	}
 
 	@Override
 	public Alumno actualizarAlumno(Alumno a) {
-		// TODO Auto-generated method stub
-		return null;
+		this.entityManager.merge(a);
+		//this.entityManager.flush()//si incluyera una modificación del ID, sería necesario
+		
+		return a;
 	}
 
 	@Override
 	public void borrarAlumno(Long id) {
-		// TODO Auto-generated method stub
+		
+		Alumno alumno_a_eliminar = this.leerAlumnoPorId(id);//this.entityManager.find(Alumno.class, id);
+		//TODO opcion mejora, comprobar que es !=null, que ese registro exsite
+		this.entityManager.remove(alumno_a_eliminar);
 		
 	}
 

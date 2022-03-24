@@ -59,6 +59,13 @@ public class AlumnoController {
 		
 		return alumno;
 	}
+
+	
+	/**
+	 * ********************************************
+	 * INICIO DE ACCESO A BASE DATOS CON SPRINGDATA
+	 * ********************************************
+	 */
 	
 	@GetMapping //GET http://localhost:8081/alumno
 	public ResponseEntity<?> leerTodos () //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
@@ -74,6 +81,57 @@ public class AlumnoController {
 		
 		return responseEntity;
 	}
+	
+	@GetMapping("/buscarporrangoedad/{edad1}/{edad2}") //GET http://localhost:8081/alumno/6/90
+	public ResponseEntity<?> obtenerAlumnosPorRangoDeEdad (@PathVariable int edad1, @PathVariable int edad2 ) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> lista_alumnos = null;
+		
+			lista_alumnos = this.alumnoService.findByEdadBetween(edad1, edad2);
+			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
+		
+		return responseEntity;
+	}
+	
+	@GetMapping("/buscarpornombre/{patron}") //GET http://localhost:8081/alumno/Pepa
+	public ResponseEntity<?> obtenerAlumnosPorRangoDeEdad (@PathVariable String patron ) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> lista_alumnos = null;
+		
+			lista_alumnos = this.alumnoService.findByNombreLike(patron);
+			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
+		
+		return responseEntity;
+	}
+	
+	
+	@GetMapping("/buscarpornombreoape/{patron}") //GET http://localhost:8081/alumno/Pepa
+	public ResponseEntity<?> buscarAlumnosPorNombreoApe (@PathVariable String patron) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> lista_alumnos = null;
+		
+			lista_alumnos = this.alumnoService.busquedaPorNombreOApellido(patron);
+			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
+		
+		return responseEntity;
+	}
+	
+	
+	@GetMapping("/buscarpornombreoapenativa/{patron}") //GET http://localhost:8081/alumno/Pepa
+	public ResponseEntity<?> buscarAlumnosPorNombreoApeNativa (@PathVariable String patron) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> lista_alumnos = null;
+		
+			lista_alumnos = this.alumnoService.busquedaPorNombreOApellidoNativa(patron);
+			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
+		
+		return responseEntity;
+	}
+	
 	
 	@GetMapping("/{id}") //GET http://localhost:8081/alumno/3
 	public ResponseEntity<?> leerAlumnoPorId (@PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
@@ -99,7 +157,6 @@ public class AlumnoController {
 		
 		return responseEntity;
 	}
-	
 	
 	@PostMapping //POST http://localhost:8081/alumno/
 	public ResponseEntity<?> insertarAlumno (@RequestBody Alumno alumno) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
@@ -143,5 +200,106 @@ public class AlumnoController {
 		
 		return responseEntity;
 	}
+
+
+	/**
+	 * ********************************************
+	 * FIN DE ACCESO A BASE DATOS CON SPRINGDATA
+	 * ********************************************
+	 */
+	
+	/**
+	 * **********************************************
+	 * INICIO DE ACCESO A BASE DATOS CON HIBERNATE JPA
+	 * **********************************************
+	 */
+	
+
+	@GetMapping("/hbjpa") //GET http://localhost:8081/alumno/hbjpa
+	public ResponseEntity<?> leerTodosHbJpa () //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> lista_alumnos = null;
+		
+		
+			lista_alumnos = this.alumnoService.findAllHbJpa();
+			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
+			
+			
+		
+		return responseEntity;
+	}
+	
+	@GetMapping("/hbjpa/{id}") //GET http://localhost:8081/alumno//hbjpa/3
+	public ResponseEntity<?> leerAlumnoPorIdHbJpa (@PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Alumno alumno_leido = null;
+		
+			alumno_leido = this.alumnoService.findByIdHbJpa(id);
+			if (alumno_leido!=null)
+			{
+				//ese id existía y por tanto, tenemos un alumno que devolver
+				responseEntity = ResponseEntity.ok(alumno_leido);
+				
+			} else  
+			{
+				//TODO hacer el log
+				//ese id existía y por tanto, tenemos un alumno que devolver
+				responseEntity = ResponseEntity.noContent().build();
+			}
+		
+		
+		return responseEntity;
+	}
+	
+	@PostMapping("/hbjpa") //POST http://localhost:8081/alumno/hbjpa
+	public ResponseEntity<?> insertarAlumnoHbJpa (@RequestBody Alumno alumno) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Alumno alumno_creado = null;
+		
+			alumno_creado = this.alumnoService.saveHbJpa(alumno);
+			responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(alumno_creado);
+		
+		return responseEntity;
+	}
+	
+	@PutMapping("/hbjpa/{id}") //PUT http://localhost:8081/alumno//hbjpa/id
+	public ResponseEntity<?> modificarAlumnoHbJpa (@RequestBody Alumno alumno, @PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Alumno alumno_actualizado = null;
+		
+			alumno_actualizado = this.alumnoService.updateHbJpa(alumno, id);
+			if (alumno_actualizado != null)
+			{
+				//se ha MODIFICADO correctamente
+				responseEntity = ResponseEntity.ok(alumno_actualizado);
+			} else {
+				responseEntity = ResponseEntity.notFound().build();
+			}
+		
+		return responseEntity;
+	}
+	
+	@DeleteMapping("/hbjpa/{id}") //DELETE http://localhost:8081/alumno/hbjpa/id
+	public ResponseEntity<?> borrarAlumnoHbJpa (@PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		
+			this.alumnoService.deleteByIdHbJpa(id);
+			responseEntity = ResponseEntity.ok().build();
+		
+		return responseEntity;
+	}
+
+	
+	
+	/**
+	 * **********************************************
+	 * FIN DE ACCESO A BASE DATOS CON HIBERNATE JPA
+	 * **********************************************
+	 */
 
 }

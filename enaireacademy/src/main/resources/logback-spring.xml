@@ -2,8 +2,9 @@
 <configuration>
 	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
 	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+	<property name="LOG_FILE" value="carpeta1/f.log"/><!-- importante, declarar esta propiedad antes que la configuracion de spring file-appender -->
 	<include resource="org/springframework/boot/logging/logback/file-appender.xml" />
-	<property name="LOG_FILE" value="carpeta1/f.log"/>
+	
 	
 	<root level="INFO">
 		<appender-ref ref="FILE" />
