@@ -7,15 +7,24 @@ import javax.persistence.Entity;//USANDO JPA
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity //con esta anotación, le digo a Hibernate, que esto es una clase de java asociada a una tabla
 @Table (name = "alumnos")//este es el nombre que tiene o tendrá la tabla en la base de datos
 public class Alumno {
 	
+	//validación más potente @Pattern(regexp="\\(\\d{3}\\)\\d{3}-\\d{4}")
 	
 	@Id//clave primaria sea un numero
 	@GeneratedValue(strategy = GenerationType.IDENTITY) //USE EL AUTOINCREMENTO DE MYSQL
@@ -24,13 +33,55 @@ public class Alumno {
 	//NO ES NECESARIO ANOTAR ESTOS ATRIBUTOS COMO COLUMNAS
 	//LO VA A GENERERA AUTOMÁTICAMENTE
 	
+	//VALIDAR EL NOMBRE PARA QUE TENGA UN TAMAÑO DE ENTRE 3 Y 15 CARACTERES
+	
+	@Size(min = 3, max = 15)
 	private String nombre;
+	
+	@NotEmpty //@NotNull y longuitud sea mayor o igual que 1
 	private String apellido;
+	
+	@Email
 	private String email;
+	
+	@Min(0)
+	@Max(130)
 	private int edad;
+	
+	@Lob //large object binary 
+	@JsonIgnore//con esta anotación indico que este atributo no va en el JSON de respuesta/no se serialice
+	private byte[] foto;
+	
+	//vamos a definir una especie de flag/bandera
+	//para indicar si un alumno tiene foto o no
+	
+	public Integer getFotohashCode ()
+	{
+		Integer idev = null;
+		
+			if (this.foto != null)
+			{
+				idev = this.foto.hashCode();
+			}
+		
+		return idev;
+	}
+	
+	
+	
 	
 	//Quiero saber cuándo se inserta un registro
 	
+	public byte[] getFoto() {
+		return foto;
+	}
+
+
+	public void setFoto(byte[] foto) {
+		this.foto = foto;
+	}
+
+
 	@Column(name = "creado_en")//puedo especificar un nombre de columna para este atributo con COLUMN
 	@Temporal (TemporalType.TIMESTAMP)//quiero que la fecha se guarde en FECHA HH:MM:SS:MSS
 	private Date creadoEn;

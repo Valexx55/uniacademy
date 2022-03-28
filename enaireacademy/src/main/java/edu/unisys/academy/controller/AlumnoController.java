@@ -1,6 +1,10 @@
 package edu.unisys.academy.controller;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import edu.unisys.academy.model.Alumno;
 import edu.unisys.academy.service.AlumnoService;
@@ -184,35 +191,116 @@ public class AlumnoController {
 		return responseEntity;
 	}
 	
+	/**
+	 * 
+	 * @param br la info de los errores detectados
+	 * @return un mensaje HTTP con los errores
+	 */
+	private ResponseEntity<?> obtenerErrores (BindingResult br)
+	{
+		ResponseEntity<?> responseEntity = null;
+		List<ObjectError> lista_errores = null;
+		
+			lista_errores = br.getAllErrors();
+			responseEntity = ResponseEntity.badRequest().body(lista_errores);
+			
+			lista_errores.forEach(objeto_error -> {
+				log.error(objeto_error.toString());
+			});
+		
+		
+		return responseEntity;
+	}
+	
 	@PostMapping //POST http://localhost:8081/alumno/
-	public ResponseEntity<?> insertarAlumno (@RequestBody Alumno alumno) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	public ResponseEntity<?> insertarAlumno (@Valid @RequestBody Alumno alumno, BindingResult br) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
 	{
 		ResponseEntity<?> responseEntity = null;
 		Alumno alumno_creado = null;
 		
-			alumno_creado = this.alumnoService.save(alumno);
-			responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(alumno_creado);
+			//TENGO ERRORES??
+			//validarCP (alumno.cp) o en un FILTRO @WEBfilter
+			if (br.hasErrors())
+			{
+				log.error("El alumno trae errores post");
+				responseEntity = obtenerErrores(br);
+				
+			} else {
+				
+				log.debug ("El alumno pasa la validación");
+				alumno_creado = this.alumnoService.save(alumno);
+				responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(alumno_creado);
+				
+			}
+		
+			
+		
+		return responseEntity;
+	}
+	
+	
+	@PostMapping("/crear-con-foto") //POST http://localhost:8081/alumno/
+	public ResponseEntity<?> insertarAlumnoConFoto (@Valid Alumno alumno, BindingResult br, MultipartFile archivo) throws IOException //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Alumno alumno_creado = null;
+		
+			//TENGO ERRORES??
+			//validarCP (alumno.cp) o en un FILTRO @WEBfilter
+			if (br.hasErrors())
+			{
+				log.error("El alumno trae errores post");
+				responseEntity = obtenerErrores(br);
+				
+			} else {
+				//ANTES DE INSERTAR, VOY A INSPECCIONAR EL ARCHIVOS
+				if (!archivo.isEmpty())
+				{
+					//el archivo, trae contenido
+					try {
+						alumno.setFoto(archivo.getBytes());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						log.error("error al acceder al contenido de la foto" , e);
+						throw e;
+					}
+				}
+				
+				log.debug ("El alumno pasa la validación");
+				alumno_creado = this.alumnoService.save(alumno);
+				responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(alumno_creado);
+				
+			}
+		
+			
 		
 		return responseEntity;
 	}
 	
 	@PutMapping("/{id}") //PUT http://localhost:8081/alumno/id
-	public ResponseEntity<?> modificarAlumno (@RequestBody Alumno alumno, @PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	public ResponseEntity<?> modificarAlumno (@Valid @RequestBody Alumno alumno,  BindingResult br, @PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
 	{
 		ResponseEntity<?> responseEntity = null;
 		Alumno alumno_actualizado = null;
 		
-			alumno_actualizado = this.alumnoService.update(alumno, id);
-			if (alumno_actualizado != null)
+			if (br.hasErrors())
 			{
-				//se ha MODIFICADO correctamente
-				responseEntity = ResponseEntity.ok(alumno_actualizado);
-			} else {
-				responseEntity = ResponseEntity.notFound().build();
+				log.error("El alumno trae errores put");
+				responseEntity = obtenerErrores(br);
 			}
-		
-			 
-			 
+			else {
+				alumno_actualizado = this.alumnoService.update(alumno, id);
+				if (alumno_actualizado != null)
+				{
+					//se ha MODIFICADO correctamente
+					responseEntity = ResponseEntity.ok(alumno_actualizado);
+				} else {
+					responseEntity = ResponseEntity.notFound().build();
+				}
+				
+			}
+			
 		return responseEntity;
 	}
 	

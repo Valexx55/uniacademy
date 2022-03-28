@@ -1,5 +1,7 @@
 package edu.unisys.academy.controller;
 
+import java.io.IOException;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +32,19 @@ public class GestionExcepciones {
 		String str_exception = null;
 		
 			str_exception = "ERROR detectado HB JPA = " +exception.toString();
+			responseEntity = ResponseEntity.internalServerError().body(str_exception);
+			
+			
+		return responseEntity;
+	}
+	
+	@ExceptionHandler(IOException.class)
+	public ResponseEntity<?> errorConLaFotoDelAlumno (IOException exception)
+	{
+		ResponseEntity<?> responseEntity = null;
+		String str_exception = null;
+		
+			str_exception = "ERROR detectado en el controlador con la FOTO recibida = " +exception.toString();
 			responseEntity = ResponseEntity.internalServerError().body(str_exception);
 			
 			
