@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -94,13 +95,25 @@ public class AlumnoController {
 		return responseEntity;
 	}
 	
-	@GetMapping("/buscarpornombre/{patron}") //GET http://localhost:8081/alumno/Pepa
-	public ResponseEntity<?> obtenerAlumnosPorRangoDeEdad (@PathVariable String patron ) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	@GetMapping("/buscarpornombrelike/{patron}") //GET http://localhost:8081/alumno/Pepa
+	public ResponseEntity<?> obtenerAlumnosPorNombreLike (@PathVariable String patron ) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
 	{
 		ResponseEntity<?> responseEntity = null;
 		Iterable<Alumno> lista_alumnos = null;
 		
 			lista_alumnos = this.alumnoService.findByNombreLike(patron);
+			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
+		
+		return responseEntity;
+	}
+	
+	@GetMapping("/buscarpornombre/{nombre}") //GET http://localhost:8081/alumno/Pepa
+	public ResponseEntity<?> obtenerAlumnosPorNombre (@PathVariable String nombre ) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> lista_alumnos = null;
+		
+			lista_alumnos = this.alumnoService.findByNombre(nombre);
 			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
 		
 		return responseEntity;
@@ -128,6 +141,19 @@ public class AlumnoController {
 		
 			lista_alumnos = this.alumnoService.busquedaPorNombreOApellidoNativa(patron);
 			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
+		
+		return responseEntity;
+	}
+	
+	
+	@GetMapping("/pagina") //GET http://localhost:8081/alumno/pagina?page=0&size=2
+	public ResponseEntity<?> listarAlumnosPorPagina (Pageable pageable) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> pagina_alumnos = null;
+		
+			pagina_alumnos = this.alumnoService.findAll(pageable);
+			responseEntity = ResponseEntity.ok(pagina_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
 		
 		return responseEntity;
 	}

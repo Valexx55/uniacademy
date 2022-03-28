@@ -26,6 +26,8 @@ public interface AlumnoService {
 	
 	public Iterable<Alumno> findByNombreLike (String patron);
 	
+	public Iterable<Alumno> findByNombre (String nombre);
+	
 	public Iterable<Alumno> busquedaPorNombreOApellido (String patron);
 	
 	public Iterable<Alumno> busquedaPorNombreOApellidoNativa (String patron);

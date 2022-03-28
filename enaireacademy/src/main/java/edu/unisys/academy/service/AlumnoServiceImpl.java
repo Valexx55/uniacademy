@@ -116,8 +116,13 @@ public class AlumnoServiceImpl implements AlumnoService {
 	@Override
 	@Transactional (readOnly = true)
 	public Iterable<Alumno> findByNombreLike (String patron) {
-		return this.alumnoRepositorySpringData.findByNombreLike(patron);
-		//return this.alumnoRepositorySpringData.findByNombre(patron);
+		return this.alumnoRepositorySpringData.findByNombreLike("%"+patron+"%");//esto funcionaría igual que el findByNameContaining
+	}
+	
+	@Override
+	@Transactional (readOnly = true)
+	public Iterable<Alumno> findByNombre (String nombre) {
+		return this.alumnoRepositorySpringData.findByNombre(nombre);//esto funcionaría igual que el findByNameContaining
 	}
 	
 	@Override
@@ -137,8 +142,7 @@ public class AlumnoServiceImpl implements AlumnoService {
 	@Override
 	@Transactional (readOnly = true)
 	public Page<Alumno> findAll(Pageable pageable) {
-		// TODO Terminar de hacer la llamada para leer por bloques (PagingAndSorting Repository)
-		return null;
+		return this.alumnoRepositorySpringData.findAll(pageable);
 	}
 	
 	/**
