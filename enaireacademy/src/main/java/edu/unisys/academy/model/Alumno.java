@@ -9,7 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQuery;
+import javax.persistence.NamedStoredProcedureQueries;
+import javax.persistence.NamedStoredProcedureQuery;
+import javax.persistence.ParameterMode;
 import javax.persistence.PrePersist;
+import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -25,6 +29,29 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity //con esta anotación, le digo a Hibernate, que esto es una clase de java asociada a una tabla
 @Table (name = "alumnos")//este es el nombre que tiene o tendrá la tabla en la base de datos
 @NamedQuery (name = "Alumno.mayoresDe50", query = "SELECT a FROM Alumno a WHERE a.edad>50") //tb existene NamedQuerierNativas
+@NamedStoredProcedureQueries(
+		{
+			//POR CADA PROCEDIMIENTO ALMACENADO, DEBO CREAR UNA ANOTACIÓN @NAMEDSTOREPROCEDUREQUERY
+			//PARA CADA UNA, DEBO INDICAR EL NAME (NOMBRE DESDE JPA) Y EL PROCEDURENAME (NOMBRE EN LA BD)
+				//DENTRO DE CADA NAMEDPROCEDUREQUERY
+					//TENGO QUE INDENTIFICAR LOS PARÁMETROS DE ENTRADA Y SALIDA CORRESPONDIENTES CON @STOREPROCEDUREPARAMETER
+					//(en el caso de que existan)
+			@NamedStoredProcedureQuery ( name = "Alumno.alumnoRegistradosHoy", procedureName = "obtenerAlumnosRegistradosHoy", resultClasses = edu.unisys.academy.model.Alumno.class),
+			@NamedStoredProcedureQuery 
+			(name = "Alumno.alumnosEdadMediaMinMax", procedureName = "calcular_max_min_media_edad", 
+			parameters = {
+							@StoredProcedureParameter(mode = ParameterMode.OUT, name = "edadmax", type = Integer.class),
+							@StoredProcedureParameter(mode = ParameterMode.OUT, name = "edadmin", type = Integer.class),
+							@StoredProcedureParameter(mode = ParameterMode.OUT, name = "edadmedia", type = Float.class),
+						}
+				
+			),
+			@NamedStoredProcedureQuery (name = "Alumno.alumnosNombreComo", procedureName = "obtenerAlumnosConNombreComo" ,
+			parameters = {
+					@StoredProcedureParameter(mode = ParameterMode.IN, name = "patron" ,type = String.class)
+			}, resultClasses = edu.unisys.academy.model.Alumno.class)
+		}
+		)
 public class Alumno {
 	
 	//validación más potente @Pattern(regexp="\\(\\d{3}\\)\\d{3}-\\d{4}")

@@ -2,6 +2,7 @@ package edu.unisys.academy.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -396,6 +397,46 @@ public class AlumnoController {
 		
 			this.alumnoService.deleteById(id);
 			responseEntity = ResponseEntity.ok().build();
+		
+		return responseEntity;
+	}
+	
+	@GetMapping("/procedimientoAltasHoy") //GET http://localhost:8081/alumno/procedimientoAltasHoy
+	public ResponseEntity<?> procedimientoAltasHoy () //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> lista_alumnos = null;
+		
+		
+			lista_alumnos = this.alumnoService.procedimientoAlumnosAltaHoy();
+			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
+		
+		return responseEntity;
+	}
+	
+	//TODO probar estadisticas POR edad
+	@GetMapping("/procedimientoEstadisticasEdad") //GET http://localhost:8081/alumno/procedimientoEstadisticasEdad
+	public ResponseEntity<?> procedimientoEstadisticasEdad () //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Map<String, Object> mapa_edades = null;
+		
+		
+			mapa_edades = this.alumnoService.procedimientoAlumnosEstadisticasEdad();
+			responseEntity = ResponseEntity.ok(mapa_edades);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
+		
+		return responseEntity;
+	}
+	
+	@GetMapping("/procedimientoBusquedaPorNombre/{patron}") //GET http://localhost:8081/alumno/procedimientoBusquedaPorNombre/{patron}
+	public ResponseEntity<?> procedimientoBusquedaPorNombre (@PathVariable String patron) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> lista_alumnos = null;
+		
+		
+			lista_alumnos = this.alumnoService.procedimientoAlumnosNombreComo(patron);
+			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
 		
 		return responseEntity;
 	}

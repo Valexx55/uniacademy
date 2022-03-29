@@ -1,9 +1,12 @@
 package edu.unisys.academy.service;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.repository.query.Param;
 
 import edu.unisys.academy.model.Alumno;
 
@@ -35,6 +38,12 @@ public interface AlumnoService {
 	public Page<Alumno> findAll(Pageable pageable);
 	
 	public Iterable<Alumno> mayoresDe50();
+	
+	public Iterable<Alumno> procedimientoAlumnosAltaHoy();
+	
+	public Map<String, Object> procedimientoAlumnosEstadisticasEdad();
+	
+	public Iterable<Alumno> procedimientoAlumnosNombreComo(@Param("patron") String patron);
 	
 	////////////////////////// SPRINGDATA
 	

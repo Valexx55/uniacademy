@@ -1,8 +1,12 @@
 package edu.unisys.academy.repository;
 
+import java.util.Map;
+
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 import edu.unisys.academy.model.Alumno;
 
@@ -42,7 +46,17 @@ public interface AlumnoRepositorySpringData extends PagingAndSortingRepository<A
 		public Iterable<Alumno> mayoresDe50();
 		
 		//PROCEDIMIENTOS ALMACENADOS
+		
+		@Procedure(name = "Alumno.alumnoRegistradosHoy")
+		public Iterable<Alumno> procedimientoAlumnosAltaHoy();
+		
+		@Procedure(name = "Alumno.alumnosEdadMediaMinMax")
+		public Map<String, Object> procedimientoAlumnosEstadisticasEdad();
+		
+		@Procedure(name = "Alumno.alumnosNombreComo")
+		public Iterable<Alumno> procedimientoAlumnosNombreComo(@Param("patron") String patron);
 	
+		
 	
 		//API Criteria -- no lo vamos a ver
 

@@ -1,5 +1,6 @@
 package edu.unisys.academy.service;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,6 +158,25 @@ public class AlumnoServiceImpl implements AlumnoService {
 		return this.alumnoRepositorySpringData.mayoresDe50();
 	}
 	
+	@Override
+	@Transactional //OJO que cuando llamamos a un procedimiento almacenado, hay que indicar Transactional (readonly a false) aunque no modifique ningún registro
+	public Iterable<Alumno> procedimientoAlumnosAltaHoy() {
+		return this.alumnoRepositorySpringData.procedimientoAlumnosAltaHoy();
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> procedimientoAlumnosEstadisticasEdad() {
+		// TODO Auto-generated method stub
+		return this.alumnoRepositorySpringData.procedimientoAlumnosEstadisticasEdad();
+	}
+
+	@Override
+	@Transactional
+	public Iterable<Alumno> procedimientoAlumnosNombreComo(String patron) {
+		return this.alumnoRepositorySpringData.procedimientoAlumnosNombreComo("%"+patron+"%");
+	}
+	
 	/**
 	 * ********************************************
 	 * FIN DE ACCESO A BASE DATOS CON SPRINGDATA
@@ -231,6 +251,8 @@ public class AlumnoServiceImpl implements AlumnoService {
 		// TODO Auto-generated method stub
 		return this.alumnoRepositoryHibernateJPA.mayoresDe50();
 	}
+
+	
 
 	
 
