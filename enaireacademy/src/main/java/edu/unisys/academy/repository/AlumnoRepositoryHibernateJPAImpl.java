@@ -76,4 +76,10 @@ remove (entity) //elimino
 		
 	}
 
+	@Override
+	public Iterable<Alumno> mayoresDe50() {
+		Query query = this.entityManager.createNamedQuery("Alumno.mayoresDe50");
+		return query.getResultList();
+	}
+
 }

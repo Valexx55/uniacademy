@@ -8,10 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -22,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity //con esta anotación, le digo a Hibernate, que esto es una clase de java asociada a una tabla
 @Table (name = "alumnos")//este es el nombre que tiene o tendrá la tabla en la base de datos
+@NamedQuery (name = "Alumno.mayoresDe50", query = "SELECT a FROM Alumno a WHERE a.edad>50") //tb existene NamedQuerierNativas
 public class Alumno {
 	
 	//validación más potente @Pattern(regexp="\\(\\d{3}\\)\\d{3}-\\d{4}")
@@ -48,7 +51,7 @@ public class Alumno {
 	@Max(130)
 	private int edad;
 	
-	@Lob //large object binary 
+	@Lob //large object binary -- equivale un un LONGBLOB en Mysql
 	@JsonIgnore//con esta anotación indico que este atributo no va en el JSON de respuesta/no se serialice
 	private byte[] foto;
 	

@@ -9,8 +9,11 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -85,6 +88,20 @@ public class AlumnoController {
 			lista_alumnos = this.alumnoService.findAll();
 			responseEntity = ResponseEntity.ok(lista_alumnos);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
 			
+			
+		
+		return responseEntity;
+	}
+	
+	@GetMapping("/mayoresDe50") //GET http://localhost:8081/alumno
+	public ResponseEntity<?> obtenerAlumnosMayoresDe50 () //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> lista_alumnos_masde50 = null;
+		
+		
+			lista_alumnos_masde50 = this.alumnoService.mayoresDe50();
+			responseEntity = ResponseEntity.ok(lista_alumnos_masde50);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
 			
 		
 		return responseEntity;
@@ -278,6 +295,74 @@ public class AlumnoController {
 		return responseEntity;
 	}
 	
+	@PutMapping("/editar-con-foto/{id}") //POST http://localhost:8081/alumno/
+	public ResponseEntity<?> editarAlumnoConFoto (@Valid Alumno alumno, BindingResult br, @PathVariable Long id, MultipartFile archivo) throws IOException //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Alumno alumno_modificado = null;
+		
+			//TENGO ERRORES??
+			//validarCP (alumno.cp) o en un FILTRO @WEBfilter
+			if (br.hasErrors())
+			{
+				log.error("El alumno trae errores post");
+				responseEntity = obtenerErrores(br);
+				
+			} else {
+				//ANTES DE INSERTAR, VOY A INSPECCIONAR EL ARCHIVOS
+				if (!archivo.isEmpty())
+				{
+					//el archivo, trae contenido
+					try {
+						alumno.setFoto(archivo.getBytes());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						log.error("error al acceder al contenido de la foto" , e);
+						throw e;
+					}
+				}
+				
+				log.debug ("El alumno pasa la validación");
+				alumno_modificado = this.alumnoService.update(alumno, id);
+				responseEntity = (alumno_modificado != null) ? (ResponseEntity.ok (alumno_modificado)) : (ResponseEntity.notFound().build());
+				
+				
+			}
+		
+			
+		
+		return responseEntity;
+	}
+	
+	@GetMapping("/obtenerfoto/{id}") //GET http://localhost:8081/alumno/3
+	public ResponseEntity<?> leerFotoAlumnoPorId (@PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Optional<Alumno> opcional_alumno = null;
+		Alumno alumno_leido = null;
+		Resource foto_alumno = null;
+		
+			opcional_alumno = this.alumnoService.findById(id);
+			if (opcional_alumno.isPresent())
+			{
+				//ese id existía y por tanto, tenemos un alumno que devolver
+				alumno_leido = opcional_alumno.get();
+				foto_alumno = new ByteArrayResource (alumno_leido.getFoto());
+				responseEntity = ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(foto_alumno);
+				
+			} else  
+			{
+				//TODO hacer el log
+				//ese id existía y por tanto, tenemos un alumno que devolver
+				responseEntity = ResponseEntity.noContent().build();
+			}
+		
+		
+		return responseEntity;
+	}
+	
+	
 	@PutMapping("/{id}") //PUT http://localhost:8081/alumno/id
 	public ResponseEntity<?> modificarAlumno (@Valid @RequestBody Alumno alumno,  BindingResult br, @PathVariable Long id) //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
 	{
@@ -408,6 +493,19 @@ public class AlumnoController {
 		return responseEntity;
 	}
 
+	@GetMapping("/hbjpa/mayoresDe50") //GET http://localhost:8081/alumno/hbjpa/mayoresDe50
+	public ResponseEntity<?> obtenerAlumnosMayoresDe50HbJpa () //con ResponseEntity<?> indico que devuelvo un mensaje HTTP y que el cuerpo lleva un tipo cualquiera (en JSON)
+	{
+		ResponseEntity<?> responseEntity = null;
+		Iterable<Alumno> lista_alumnos_masde50 = null;
+		
+		
+			lista_alumnos_masde50 = this.alumnoService.mayoresDe50HbJpa();
+			responseEntity = ResponseEntity.ok(lista_alumnos_masde50);//ya estoy componinedo el HTTP de respuesta, indicando OK en la cabecera (200) y en el cuerpo, la lista de alumnos
+			
+		
+		return responseEntity;
+	}
 	
 	
 	/**

@@ -34,6 +34,8 @@ public interface AlumnoService {
 	
 	public Page<Alumno> findAll(Pageable pageable);
 	
+	public Iterable<Alumno> mayoresDe50();
+	
 	////////////////////////// SPRINGDATA
 	
 	///////////////////////// HIBERNATE JPA 
@@ -47,6 +49,8 @@ public interface AlumnoService {
 	public Alumno updateHbJpa (Alumno alumno, Long id);
 	
 	public void deleteByIdHbJpa (Long id);
+	
+	public Iterable<Alumno> mayoresDe50HbJpa();
 	
 	
 	

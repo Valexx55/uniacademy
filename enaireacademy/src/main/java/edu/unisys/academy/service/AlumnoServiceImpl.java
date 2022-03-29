@@ -89,6 +89,11 @@ public class AlumnoServiceImpl implements AlumnoService {
 				alumno_leido.setEmail(alumno.getEmail());
 				alumno_leido.setEdad(alumno.getEdad());
 				
+				if (alumno.getFoto()!=null)
+				{
+					alumno_leido.setFoto(alumno.getFoto());
+				}
+				
 				//3 SAVE SOBRE EL ALUMNO MODIFICADO
 				alumno_actualizado = this.alumnoRepositorySpringData.save(alumno_leido);
 				
@@ -143,6 +148,13 @@ public class AlumnoServiceImpl implements AlumnoService {
 	@Transactional (readOnly = true)
 	public Page<Alumno> findAll(Pageable pageable) {
 		return this.alumnoRepositorySpringData.findAll(pageable);
+	}
+	
+	@Override
+	@Transactional (readOnly = true)
+	public Iterable<Alumno> mayoresDe50() {
+		
+		return this.alumnoRepositorySpringData.mayoresDe50();
 	}
 	
 	/**
@@ -211,6 +223,13 @@ public class AlumnoServiceImpl implements AlumnoService {
 		
 		this.alumnoRepositoryHibernateJPA.borrarAlumno(id);
 		
+	}
+
+	@Override
+	@Transactional (readOnly = true)
+	public Iterable<Alumno> mayoresDe50HbJpa() {
+		// TODO Auto-generated method stub
+		return this.alumnoRepositoryHibernateJPA.mayoresDe50();
 	}
 
 	

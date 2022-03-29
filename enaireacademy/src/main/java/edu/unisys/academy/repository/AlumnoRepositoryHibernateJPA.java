@@ -16,6 +16,8 @@ public interface AlumnoRepositoryHibernateJPA {
 	
 	void borrarAlumno (Long id);
 	
+	public Iterable<Alumno> mayoresDe50();
+	
 	
 	
 

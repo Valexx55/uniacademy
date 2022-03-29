@@ -36,8 +36,14 @@ public interface AlumnoRepositorySpringData extends PagingAndSortingRepository<A
 		public Iterable<Alumno> busquedaPorNombreOApellidoNativa (String patron); //TODO revisar el like
 	
 	
-	//PROCEDIMIENTOS ALMACENADOS
-	//@NamedQuery
-	//API Criteria
+		//@NamedQuery
+		
+		//para referirnos a una NamedQuery desde Spring, sólo necesito un método que se llame igual
+		public Iterable<Alumno> mayoresDe50();
+		
+		//PROCEDIMIENTOS ALMACENADOS
+	
+	
+		//API Criteria -- no lo vamos a ver
 
 }
