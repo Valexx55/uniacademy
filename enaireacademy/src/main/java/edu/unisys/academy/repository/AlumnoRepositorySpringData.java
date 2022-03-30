@@ -51,7 +51,7 @@ public interface AlumnoRepositorySpringData extends PagingAndSortingRepository<A
 		public Iterable<Alumno> procedimientoAlumnosAltaHoy();
 		
 		@Procedure(name = "Alumno.alumnosEdadMediaMinMax")
-		public Map<String, Object> procedimientoAlumnosEstadisticasEdad();
+		public Map<String, Object> procedimientoAlumnosEstadisticasEdad(int edadmax, int edadmin, float edadmedia);
 		
 		@Procedure(name = "Alumno.alumnosNombreComo")
 		public Iterable<Alumno> procedimientoAlumnosNombreComo(@Param("patron") String patron);

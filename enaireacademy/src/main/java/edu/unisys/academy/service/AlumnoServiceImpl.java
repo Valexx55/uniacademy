@@ -168,7 +168,7 @@ public class AlumnoServiceImpl implements AlumnoService {
 	@Transactional
 	public Map<String, Object> procedimientoAlumnosEstadisticasEdad() {
 		// TODO Auto-generated method stub
-		return this.alumnoRepositorySpringData.procedimientoAlumnosEstadisticasEdad();
+		return this.alumnoRepositorySpringData.procedimientoAlumnosEstadisticasEdad(0, 0, 0f);
 	}
 
 	@Override

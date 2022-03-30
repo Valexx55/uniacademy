@@ -40,9 +40,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 			@NamedStoredProcedureQuery 
 			(name = "Alumno.alumnosEdadMediaMinMax", procedureName = "calcular_max_min_media_edad", 
 			parameters = {
-							@StoredProcedureParameter(mode = ParameterMode.OUT, name = "edadmax", type = Integer.class),
-							@StoredProcedureParameter(mode = ParameterMode.OUT, name = "edadmin", type = Integer.class),
-							@StoredProcedureParameter(mode = ParameterMode.OUT, name = "edadmedia", type = Float.class),
+							@StoredProcedureParameter(mode = ParameterMode.INOUT, name = "edadmax", type = Integer.class),
+							@StoredProcedureParameter(mode = ParameterMode.INOUT, name = "edadmin", type = Integer.class),
+							@StoredProcedureParameter(mode = ParameterMode.INOUT, name = "edadmedia", type = Float.class),
 						}
 				
 			),
