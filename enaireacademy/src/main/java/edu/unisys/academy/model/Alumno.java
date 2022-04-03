@@ -4,10 +4,13 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;//USANDO JPA
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.NamedStoredProcedureQueries;
 import javax.persistence.NamedStoredProcedureQuery;
@@ -25,6 +28,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity //con esta anotación, le digo a Hibernate, que esto es una clase de java asociada a una tabla
 @Table (name = "alumnos")//este es el nombre que tiene o tendrá la tabla en la base de datos
@@ -184,7 +188,21 @@ public class Alumno {
 		super();
 	}
 	
+	@JsonIgnoreProperties(value = {"alumnos"})
+	@ManyToOne (fetch = FetchType.EAGER)
+	@JoinColumn(name = "curso_id") //ESTOY DEFINIENDO CUÁL ES LA CLAVE AJENA DE LA RELACIÓN
+	private Curso curso;
+
+	public Curso getCurso() {
+		return curso;
+	}
+
+
+	public void setCurso(Curso curso) {
+		this.curso = curso;
+	}
 	
+	//TODO deberíamos hacer el equals para ayudar a diferenciar los alumnos
 	
 	
 
